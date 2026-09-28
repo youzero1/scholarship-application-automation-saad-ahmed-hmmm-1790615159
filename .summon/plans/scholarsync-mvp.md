@@ -14,7 +14,7 @@ flows, mobile native apps, real payment processing, third-party scholarship API 
 
 ---
 
-## Phase 0 — Project scaffold
+## Phase 0 — Project scaffold — implemented
 
 1. Initialise a Vite React + TypeScript project at the repo root (`index.html`, `src/main.tsx`,
    `vite.config.ts`, `tsconfig.json`, `tsconfig.node.json`, `package.json`, `.gitignore`).
@@ -40,7 +40,7 @@ Acceptance: dev server runs, Tailwind utilities apply, Supabase client importabl
 
 ---
 
-## Phase 1 — Design system
+## Phase 1 — Design system — implemented
 
 6. In `src/styles/global.css`, define design tokens as HSL custom properties inside `@theme`
    so they become Tailwind v4 utilities. Dark-mode-first: the dark palette is the default on
@@ -73,7 +73,8 @@ Acceptance: a scratch render of each primitive looks consistent in dark mode.
 
 ---
 
-## Phase 2 — Database schema, RLS, seed
+## Phase 2 — Database schema, RLS, seed — implemented
+(applied directly via runSupabaseSql rather than supabase/migrations files)
 
 10. Write SQL migrations under `supabase/migrations/` (timestamped files) and apply them to the
     connected project. Tables:
@@ -140,7 +141,9 @@ anonymous insert into email_leads succeeds; cross-user application access return
 
 ---
 
-## Phase 3 — Auth + routing shell
+## Phase 3 — Auth + routing shell — implemented
+(guards live in `src/components/layout/RouteGuards.tsx` as component wrappers instead of
+`src/lib/guards.ts` beforeLoad hooks, since profile state lives in the auth context)
 
 16. `src/routes/__root.tsx`: html shell, `<Outlet />`, toast host, global background treatment
     (subtle radial accent glow, no purple gradient), and the auth provider wrapper.

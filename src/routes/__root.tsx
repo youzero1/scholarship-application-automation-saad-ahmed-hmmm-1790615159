@@ -1,4 +1,6 @@
 import { createRootRoute, Link, Outlet } from '@tanstack/react-router';
+import { AuthProvider } from '@/lib/auth';
+import { ToastProvider } from '@/components/ui/toast';
 
 export const Route = createRootRoute({
   component: RootLayout,
@@ -7,17 +9,21 @@ export const Route = createRootRoute({
 
 function RootLayout() {
   return (
-    <div className="relative min-h-screen bg-background text-foreground">
-      <div
-        aria-hidden
-        className="pointer-events-none fixed inset-0 -z-10"
-        style={{
-          background:
-            'radial-gradient(60rem 40rem at 50% -10%, hsl(28 96% 56% / 0.10), transparent 70%)',
-        }}
-      />
-      <Outlet />
-    </div>
+    <AuthProvider>
+      <ToastProvider>
+        <div className="relative min-h-screen bg-background text-foreground">
+          <div
+            aria-hidden
+            className="pointer-events-none fixed inset-0 -z-10"
+            style={{
+              background:
+                'radial-gradient(60rem 40rem at 50% -10%, hsl(28 96% 56% / 0.10), transparent 70%)',
+            }}
+          />
+          <Outlet />
+        </div>
+      </ToastProvider>
+    </AuthProvider>
   );
 }
 
