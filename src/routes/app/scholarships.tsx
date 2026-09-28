@@ -21,12 +21,20 @@ type Sort = 'match' | 'deadline' | 'amount';
 function ScholarshipsPage() {
   const { profile, user } = useAuth();
   const { scholarships, loading, error } = useScholarships();
-  const { applications, upsertDraft } = useApplications(user?.id ?? null);
+  const {
+    applications,
+    loading: loadingApplications,
+    error: applicationsError,
+    upsertDraft,
+  } = useApplications(user?.id ?? null);
 
   const [query, setQuery] = useState('');
   const [sort, setSort] = useState<Sort>('match');
   const [hideApplied, setHideApplied] = useState(false);
   const [generating, setGenerating] = useState<Scholarship | null>(null);
+
+  // Hold the empty state back until both queries have settled.
+  const isLoading = loading || loadingApplications;
 
   const appByScholarship = useMemo(() => {
     const map = new Map<string, Application>();
@@ -115,7 +123,13 @@ function ScholarshipsPage() {
         </p>
       )}
 
-      {loading && (
+      {applicationsError && (
+        <p className="rounded-[var(--radius-md)] border border-status-rejected/40 bg-status-rejected/10 px-4 py-3 text-sm text-status-rejected">
+          Could not load your applications: {applicationsError}
+        </p>
+      )}
+
+      {isLoading && (
         <div className="space-y-3">
           {[0, 1, 2, 3].map((i) => (
             <Skeleton key={i} className="h-40 w-full" />
@@ -123,21 +137,22 @@ function ScholarshipsPage() {
         </div>
       )}
 
-      {!loading && results.length === 0 && !error && (
+      {!isLoading && results.length === 0 && !error && (
         <div className="rounded-[var(--radius-lg)] border border-dashed border-border p-12 text-center">
           <p className="text-sm text-muted">Nothing matches that search. Try a broader term.</p>
         </div>
       )}
 
       <div className="grid gap-4">
-        {results.map((m) => (
-          <ScholarshipCard
-            key={m.scholarship.id}
-            match={m}
-            application={appByScholarship.get(m.scholarship.id)}
-            onGenerate={() => setGenerating(m.scholarship)}
-          />
-        ))}
+        {!isLoading &&
+          results.map((m) => (
+            <ScholarshipCard
+              key={m.scholarship.id}
+              match={m}
+              application={appByScholarship.get(m.scholarship.id)}
+              onGenerate={() => setGenerating(m.scholarship)}
+            />
+          ))}
       </div>
 
       <GenerateDraftDialog

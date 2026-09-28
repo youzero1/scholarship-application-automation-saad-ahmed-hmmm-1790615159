@@ -110,20 +110,26 @@ function OnboardingFlow() {
     setBusy(true);
     setError(null);
 
+    // Upsert rather than update: if the trigger-created row is somehow missing,
+    // an update would silently affect zero rows and onboarding would loop.
     const { error: updateError } = await supabase
       .from('profiles')
-      .update({
-        goal,
-        primary_use_case: useCase,
-        full_name: fullName.trim() || null,
-        school: school.trim() || null,
-        grad_year: gradYear ? Number(gradYear) : null,
-        gpa: gpa ? Number(gpa) : null,
-        major: major.trim() || null,
-        state: state || null,
-        onboarded: true,
-      })
-      .eq('id', user.id);
+      .upsert(
+        {
+          id: user.id,
+          email: user.email ?? '',
+          goal,
+          primary_use_case: useCase,
+          full_name: fullName.trim() || null,
+          school: school.trim() || null,
+          grad_year: gradYear ? Number(gradYear) : null,
+          gpa: gpa ? Number(gpa) : null,
+          major: major.trim() || null,
+          state: state || null,
+          onboarded: true,
+        },
+        { onConflict: 'id' },
+      );
 
     if (updateError) {
       setError(updateError.message);

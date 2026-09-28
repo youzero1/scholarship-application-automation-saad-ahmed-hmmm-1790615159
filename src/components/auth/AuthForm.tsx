@@ -15,13 +15,20 @@ function friendlyError(message: string) {
   return message;
 }
 
-export function AuthForm({ mode }: { mode: 'sign-in' | 'sign-up' }) {
+export function AuthForm({
+  mode,
+  redirectTo,
+}: {
+  mode: 'sign-in' | 'sign-up';
+  redirectTo?: string;
+}) {
   const { signIn, signUp } = useAuth();
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [confirmEmail, setConfirmEmail] = useState<string | null>(null);
 
   const isSignUp = mode === 'sign-up';
 
@@ -31,11 +38,15 @@ export function AuthForm({ mode }: { mode: 'sign-in' | 'sign-up' }) {
     setBusy(true);
     try {
       if (isSignUp) {
-        await signUp(email.trim(), password);
+        const { needsEmailConfirmation } = await signUp(email.trim(), password);
+        if (needsEmailConfirmation) {
+          setConfirmEmail(email.trim());
+          return;
+        }
         navigate({ to: '/onboarding' });
       } else {
         await signIn(email.trim(), password);
-        navigate({ to: '/app' });
+        navigate({ to: redirectTo ?? '/app' });
       }
     } catch (e: any) {
       setError(friendlyError(e?.message ?? 'Something went wrong. Try again.'));
@@ -51,6 +62,24 @@ export function AuthForm({ mode }: { mode: 'sign-in' | 'sign-up' }) {
         <span className="font-display text-lg tracking-tight">ScholarSync</span>
       </Link>
 
+      {confirmEmail ? (
+        <div>
+          <h1 className="font-display text-3xl">Check your inbox</h1>
+          <p className="mt-3 text-sm text-muted">
+            We sent a confirmation link to{' '}
+            <span className="text-foreground">{confirmEmail}</span>. Click it to activate your
+            account, then come back and sign in — your matches will be waiting.
+          </p>
+          <p className="mt-3 text-sm text-muted">
+            Nothing after a minute or two? Check spam, or try signing up again with a different
+            address.
+          </p>
+          <Link to="/sign-in" className="mt-8 inline-block">
+            <Button size="lg">Go to sign in</Button>
+          </Link>
+        </div>
+      ) : (
+      <>
       <h1 className="font-display text-3xl">
         {isSignUp ? 'Start applying in minutes' : 'Welcome back'}
       </h1>
@@ -108,6 +137,8 @@ export function AuthForm({ mode }: { mode: 'sign-in' | 'sign-up' }) {
           {isSignUp ? 'Sign in' : 'Create one free'}
         </Link>
       </p>
+      </>
+      )}
     </div>
   );
 }

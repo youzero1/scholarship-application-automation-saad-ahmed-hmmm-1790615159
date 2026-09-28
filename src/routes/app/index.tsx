@@ -13,7 +13,7 @@ import { ScholarshipCard } from '@/components/app/ScholarshipCard';
 import { ApplicationRow } from '@/components/app/ApplicationRow';
 import { GenerateDraftDialog } from '@/components/app/GenerateDraftDialog';
 import { daysUntil, formatCurrency, formatDate } from '@/lib/utils';
-import type { ApplicationStatus, Scholarship } from '@/types/database';
+import type { Application, ApplicationStatus, Scholarship } from '@/types/database';
 
 export const Route = createFileRoute('/app/')({
   component: DashboardPage,
@@ -48,7 +48,7 @@ function DashboardPage() {
   }, [scholarships]);
 
   const appByScholarship = useMemo(() => {
-    const map = new Map<string, (typeof applications extends null ? never : any)>();
+    const map = new Map<string, Application>();
     (applications ?? []).forEach((a) => map.set(a.scholarship_id, a));
     return map;
   }, [applications]);
@@ -82,7 +82,7 @@ function DashboardPage() {
     return (applications ?? [])
       .map((a) => ({ application: a, scholarship: byId.get(a.scholarship_id) }))
       .filter(
-        (x): x is { application: (typeof x)['application']; scholarship: Scholarship } =>
+        (x): x is { application: Application; scholarship: Scholarship } =>
           !!x.scholarship && daysUntil(x.scholarship.deadline) >= 0,
       )
       .filter((x) => x.application.status === 'draft')
