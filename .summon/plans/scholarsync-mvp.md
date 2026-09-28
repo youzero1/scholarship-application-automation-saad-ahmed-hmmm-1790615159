@@ -1,5 +1,5 @@
 ---
-status: pending
+status: implemented
 title: ScholarSync MVP — AI Scholarship Application Generator
 ---
 
@@ -175,7 +175,7 @@ after login; refresh preserves the session.
 
 ---
 
-## Phase 4 — Landing page
+## Phase 4 — Landing page — implemented
 
 21. `src/components/landing/Hero.tsx` — eyebrow "ScholarSync", H1 "Building the future",
     subhead covering automated scholarship applications with real-time status tracking,
@@ -203,7 +203,7 @@ persists a row, all CTAs route correctly, Lighthouse a11y contrast passes.
 
 ---
 
-## Phase 5 — Onboarding
+## Phase 5 — Onboarding — implemented
 
 27. `src/routes/onboarding.tsx` — 2-step flow with a progress indicator and animated step
     transition. Step 1: goal (cards — "Fund my first year", "Cover tuition gap", "Graduate
@@ -220,7 +220,7 @@ persists to the DB and `/onboarding` redirects to `/app` on revisit.
 
 ---
 
-## Phase 6 — Core dashboard (the value)
+## Phase 6 — Core dashboard (the value) — implemented
 
 30. `src/lib/matching.ts` — deterministic client-side match scoring: GPA threshold, major tag
     overlap, state match, level match, deadline proximity. Returns 0–100 score plus human
@@ -254,7 +254,7 @@ Realtime, deadline countdowns are accurate.
 
 ---
 
-## Phase 7 — Settings + account
+## Phase 7 — Settings + account — implemented
 
 40. `src/routes/app/settings.tsx` with three cards: **Profile** (editable name, school, grad
     year, GPA, major, state, activities, essay highlights — saves to `profiles`), **Plan**
